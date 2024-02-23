@@ -1,0 +1,16 @@
+.container{
+  display:inline-grid;
+  grid-template-columns: repeat(100, 50px);
+  grid-template-rows: repeat(100, 50px);
+}
+
+.cell.alive{
+  background-color: white;
+} 
+
+.cell{
+  background-color: black;
+  border-style: solid;
+  border-color: white;
+  border-width: 1px;
+}
