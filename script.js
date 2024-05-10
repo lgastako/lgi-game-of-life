@@ -12,8 +12,13 @@ speed=1000/speed;
 }
 function initHTML(){
 var container=document.querySelector(".container");
-	for (var i=0; i<10; i++){
-  for (var o=0; o<10; o++){
+	var columns=10;
+  var rows =10;
+  container.style["grid-template-rows"]=`repeat(${rows}, 50px)`;
+  container.style["grid-template-columns"]= `repeat(${columns}, 50px)`;
+  
+	for (var i=0; i<100; i++){
+  for (var o=0; o<100; o++){
   var cell=document.createElement("div");
   cell.classList.add("cell");
   cell.id=`${i};${o}`;
