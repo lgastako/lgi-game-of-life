@@ -4,15 +4,15 @@ speed=1000/speed;
 	while (true){
   	await new Promise(r => setTimeout(r, speed));
    board.updateCells();
-   board.updateDisplay()
+   board.updateDisplay();
    //console.log("ping");
   }
   
 }
 function initHTML(){
 var container=document.querySelector(".container");
-	var columns=10;
-  var rows =10;
+	var columns=20;
+  var rows =20;
   container.style["grid-template-rows"]=`repeat(${rows}, 50px)`;
   container.style["grid-template-columns"]= `repeat(${columns}, 50px)`;
 
@@ -54,8 +54,8 @@ returnNearbyCells(){
 var cells=[];
 for (var row=-1;row<2;row++)
 	for (var col=-1;col<2; col++){
- 
   var cell=[row+this.position[0],col+this.position[1]];
+  
   if (cell[0]<0){
   cell[0]=0;
   }
@@ -70,6 +70,7 @@ for (var row=-1;row<2;row++)
 return cells;
 }
 }
+
 class Board{
 constructor(){
 this.checkCells=[];
@@ -92,14 +93,19 @@ var aliveNeighbors=0;
     if (cell.alive){
     	if (aliveNeighbors<2 || aliveNeighbors>3){
       	return [false, cell];
-      }}
-      else if(!cell.alive){
+      }
+      else {
+      return [true, cell];
+      }
+      }
+      else if (!cell.alive){
       	if (aliveNeighbors==3){
         return [true, cell];
-        }
+        }else{
         return [false, cell];
-      }
-    
+      }}
+    console.log(cell);
+    console.log(aliveNeighbors)
   return "fail";
   }
   
@@ -119,9 +125,10 @@ updateCells(){
       checkedCells.push(nearbyCells[o]);}
   }
   actions.push(this.checkRules(cell));
-  checkedCells.push(cell);
+checkedCells.push(cell);
   }
-    console.log(actions);
+ //console.log(actions);
+// console.log(this.checkCells);
   for (var action of actions){
   	var [actionType, cell]=action;
     if (cell.alive != actionType){
@@ -131,21 +138,23 @@ updateCells(){
 }
   
 updateDisplay(){
-	for (var i=0; i<this.checkCells.length; i++){
-  var cell = document.getElementById(`${this.checkCells[i][0]};${this.checkCells[i][1]}`);
+var cellsToCheck=this.checkCells.slice();
+	for (var i=0; i<cellsToCheck.length; i++){
+  var cell = document.getElementById(`${cellsToCheck[i][0]};${cellsToCheck[i][1]}`);
   
   //console.log(this.checkCells);
-  if (this.data[this.checkCells[i][0]][this.checkCells[i][1]].alive){
+  if (this.data[cellsToCheck[i][0]][cellsToCheck[i][1]].alive){
   	cell.classList.add("alive");
   }
   else{
   cell.classList.remove("alive");
-  this.checkCells.splice(this.checkCells.indexOf(this.checkCells[i]));
+  console.log(this.checkCells)
+  this.checkCells.splice(this.checkCells.indexOf(cellsToCheck[i]), 1);
   }}
   }
 }
 var board= new Board();
 initHTML();
-gameClock(1);
+gameClock(0.5);
 }
 main();
