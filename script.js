@@ -12,8 +12,8 @@ speed=1000/speed;
 }
 function initHTML(){
 var container=document.querySelector(".container");
-	for (var i=0; i<100; i++){
-  for (var o=0; o<100; o++){
+	for (var i=0; i<10; i++){
+  for (var o=0; o<10; o++){
   var cell=document.createElement("div");
   cell.classList.add("cell");
   cell.id=`${i};${o}`;
