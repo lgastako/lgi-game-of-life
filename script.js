@@ -1,9 +1,12 @@
 function main(){
+
 async function gameClock(speed){
-speed=1/speed;
+speed=1000/speed;
 	while (true){
-  	await new Promise((speed => setTimeout(speed, 2000)))
-    console.log("ping");
+  	await new Promise(r => setTimeout(r, speed));
+   board.updateCells();
+   board.updateDisplay()
+   console.log("ping");
   }
   
 }
@@ -18,7 +21,6 @@ var container=document.querySelector(".container");
   var cell=e.target;
   var position=cell.id.split(";");
   board.data[position[0]][position[1]].changeState();
-  board.updateCells();
   
   board.updateDisplay();
   });
@@ -33,10 +35,13 @@ this.position=[row,col];
 this.alive=false;
 }
 changeState(){
+//console.log("alive before: ", this.alive)
 	this.alive=!this.alive;
+ // console.log("alive after: ", this.alive)
   if (this.alive){
   	board.checkCells.push(this.position);
     }
+    return true;
 }
 
 returnNearbyCells(){
@@ -72,39 +77,70 @@ this.data[i]={};
   }
   }
 }
+checkRules(cell){
+var aliveNeighbors=0;
+  var nearbyCells=cell.returnNearbyCells();
+  for(var i=0; i<nearbyCells.length;i++){
+  if (nearbyCells[i].alive){
+  	aliveNeighbors++;
+  }
+    }
+    if (cell.alive){
+    	if (aliveNeighbors<2 || aliveNeighbors>3){
+      	return [false, cell];
+      }}
+      else if(!cell.alive){
+      	if (aliveNeighbors==3){
+        return [true, cell];
+        }
+        return [false, cell];
+      }
+    
+  return "fail";
+  }
+  
+
 updateCells(){
 
   var cells=this.checkCells;
-  var actions=[]; // ["k", [position]], ["A", position]]
+  var actions=[]; // [false, [position]], [true, position] false kill true revive
   var checkedCells=[];
   
-  for (var i=0; i<cells.length;i++){
-  var cell=cells[i];
-  var aliveNeighbors=0;
-  var nearbyCells=this.data[cells[i][0]][cells[i][1]].returnNearbyCells();
-  for(var o=0; o<nearbyCells.length;o++){
-			if (nearbyCells[o].alive){ 
-      aliveNeighbors++
-      }
+  for (var i=0; i<cells.length;i++){ // for cell
+  var cell=this.data[cells[i][0]][cells[i][0]];
+  var nearbyCells=cell.returnNearbyCells();
+  for (var o=0; o<nearbyCells.length; o++){  //for nearby cell
+  if (!(checkedCells.includes(nearbyCells[o]))){
+  	actions.push(this.checkRules(nearbyCells[o]));
+    
+ // console.log(actions);
+      checkedCells.push(nearbyCells[0]);}
   }
-  console.log(aliveNeighbors);
+  actions.push(this.checkRules(cell));
   }
-
   
-} 
+  for (var action of actions){
+  	var [actionType, cell]=action;
+    if (cell.alive != actionType){
+    	cell.changeState();
+    }
+  }
+}
+  
 
 updateDisplay(){
 
 	for (var i=0; i<this.checkCells.length; i++){
   var cell = document.getElementById(`${this.checkCells[i][0]};${this.checkCells[i][1]}`);
-  console.log(this.checkCells);
+  
+  //console.log(this.checkCells);
   if (this.data[this.checkCells[i][0]][this.checkCells[i][1]].alive){
   	cell.classList.add("alive");
   }
   else{
-  cell.classList.remove("alive")
+  cell.classList.remove("alive");
 
-  this.checkCells.splice(this.checkCells.indexOf(this.checkCells[i]))
+  this.checkCells.splice(this.checkCells.indexOf(this.checkCells[i]));
 
   }}
   }
@@ -114,6 +150,6 @@ updateDisplay(){
 
 var board= new Board();
 initHTML();
-gameClock(1000);
+gameClock(1);
 }
 main();
