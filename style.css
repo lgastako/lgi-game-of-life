@@ -1,7 +1,5 @@
 .container{
   display:inline-grid;
-  grid-template-columns: repeat(100, 50px);
-  grid-template-rows: repeat(100, 50px);
 }
 
 .cell.alive{
