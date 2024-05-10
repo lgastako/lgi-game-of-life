@@ -1,5 +1,4 @@
 function main(){
-
 async function gameClock(speed){
 speed=1000/speed;
 	while (true){
@@ -133,7 +132,8 @@ updateDisplay() {
     var cellsToUpdate = this.checkCells.slice(); // Copy the array to avoid modifying it during iteration
     for (var i = 0; i < cellsToUpdate.length; i++) {
         var cell = document.getElementById(`${cellsToUpdate[i][0]};${cellsToUpdate[i][1]}`);
-        if (!this.data[cellsToUpdate[i][0]][cellsToUpdate[i][1]].alive) {
+        if (this.data[cellsToUpdate[i][0]][cellsToUpdate[i][1]].alive) {cell.classList.add("alive")}
+        else{
             cell.classList.remove("alive");
             this.checkCells.splice(this.checkCells.indexOf(cellsToUpdate[i]), 1);
         }
@@ -145,7 +145,7 @@ updateDisplay() {
 
 var board= new Board();
 initHTML();
-gameClock(1);
+gameClock(0.75);
 }
 main();
 
