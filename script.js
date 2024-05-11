@@ -6,7 +6,7 @@ function main(){
       this.speed=1;
     }
     setSpeed(speed){
-      if(speed<=0){
+      if(!speed<=0){
       this.speed=speed;
       }
       return this.speed;
@@ -48,11 +48,11 @@ pauseButton.addEventListener("click", (e)=>{
   var btn=e.target;
   //console.log(btn.classList)
   if (btn.classList.contains("toggled")){
-    btn.innerHtml="▐▐";
+    btn.textContent="▐▐";
     btn.classList.toggle("toggled");
     gameState.start();
   }else{
-    btn.innerHtml="▶";
+    btn.textContent="▶";
     btn.classList.toggle("toggled");
     gameState.stop();
   }
