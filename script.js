@@ -1,18 +1,63 @@
 function main(){
-async function gameClock(speed){
-speed=1000/speed;
-	while (true){
-  	await new Promise(r => setTimeout(r, speed));
-   board.updateCells();
-   board.updateDisplay();
-   //console.log("ping");
+
+  class GameState{
+    constructor(){
+      this.paused=true;
+      this.speed=1;
+    }
+    setSpeed(speed){
+      if(speed<=0){
+      this.speed=speed;
+      }
+      return this.speed;
+    }
+    start(speed=this.speed){ //optional speed parameter
+     
+        this.speed=speed;
+      
+      //console.log("starting");
+      //console.log(this.speed);
+      //console.log(this.paused)
+      this.paused=false;
+      this.gameClock();
+      return true;
+    }
+      stop(){
+      //console.log("stopping");
+      this.paused=true;
+      return true;
+    }
+    gameClock= async (speed=this.speed) =>  {//optional speed parameter
+      
+        while (this.paused==false){
+         board.updateCells();
+         board.updateDisplay();
+         await new Promise(r => setTimeout(r, 1000/speed));
+         //console.log("ping");
+        }
+        
+      }
   }
+
+
+function initHTML( rows, columns){
   
-}
-function initHTML(){
 var container=document.querySelector(".container");
-	var columns=20;
-  var rows =20;
+var pauseButton=document.querySelector(".pause-button");
+pauseButton.addEventListener("click", (e)=>{
+  var btn=e.target;
+  //console.log(btn.classList)
+  if (btn.classList.contains("toggled")){
+    btn.innerHtml="▐▐";
+    btn.classList.toggle("toggled");
+    gameState.start();
+  }else{
+    btn.innerHtml="▶";
+    btn.classList.toggle("toggled");
+    gameState.stop();
+  }
+});
+
   container.style["grid-template-rows"]=`repeat(${rows}, 50px)`;
   container.style["grid-template-columns"]= `repeat(${columns}, 50px)`;
 
@@ -52,32 +97,44 @@ changeState(){
 }
 returnNearbyCells(){
 var cells=[];
+var maxWidth=board.rows-1;
+var maxHeight=board.columns-1;
 for (var row=-1;row<2;row++)
 	for (var col=-1;col<2; col++){
   var cell=[row+this.position[0],col+this.position[1]];
   
   if (cell[0]<0){
-  cell[0]=0;
+  cell[0]=maxWidth;
   }
   if (cell[1]<0){
-  cell[1]=0;
+  cell[1]=maxHeight;
   }
-  if (!(this.position[0]==cell[0] && this.position[1]==cell[1])){
+  if (cell[0]>board.rows-1){
+    cell[0]=0;
+    }
+   
+    if (cell[1]>board.columns-1){
+    cell[1]=0;
+    }
+  if (!(this.position[0]==cell[0] && this.position[1]==cell[1]) && !(cells.includes(board.data[cell[0]][cell[1]]))){
   
   cells.push(board.data[cell[0]][cell[1]]);
   }  
   }
+  //console.log(cells)
 return cells;
 }
 }
 
 class Board{
-constructor(){
+constructor(rows=25, columns=25){
+  this.columns=columns;
+  this.rows=rows;
 this.checkCells=[];
 this.data=[];
-for (var i=0; i<100; i++){
+for (var i=0; i<this.rows; i++){
 this.data[i]={};
-  for (var o=0; o<100; o++){
+  for (var o=0; o<this.columns; o++){
  this.data[i][o]=new Cell(i,o);
   }
   }
@@ -86,9 +143,14 @@ checkRules(cell){
 var aliveNeighbors=0;
   var nearbyCells=cell.returnNearbyCells();
   for(var i=0; i<nearbyCells.length;i++){
+    //console.log(cell);
+    //console.log(nearbyCells)
+    
   if (nearbyCells[i].alive){
   	aliveNeighbors++;
   }
+  
+ 
     }
     if (cell.alive){
     	if (aliveNeighbors<2 || aliveNeighbors>3){
@@ -104,8 +166,6 @@ var aliveNeighbors=0;
         }else{
         return [false, cell];
       }}
-    console.log(cell);
-    console.log(aliveNeighbors)
   return "fail";
   }
   
@@ -124,8 +184,9 @@ updateCells(){
 
       checkedCells.push(nearbyCells[o]);}
   }
+  if (!(checkedCells.includes(cell))){
   actions.push(this.checkRules(cell));
-checkedCells.push(cell);
+checkedCells.push(cell);}
   }
  //console.log(actions);
 // console.log(this.checkCells);
@@ -141,20 +202,23 @@ updateDisplay(){
 var cellsToCheck=this.checkCells.slice();
 	for (var i=0; i<cellsToCheck.length; i++){
   var cell = document.getElementById(`${cellsToCheck[i][0]};${cellsToCheck[i][1]}`);
-  
+ // console.log(cellsToCheck)
   //console.log(this.checkCells);
+ // console.log(i)
+ // console.log(cell)
   if (this.data[cellsToCheck[i][0]][cellsToCheck[i][1]].alive){
   	cell.classList.add("alive");
   }
   else{
   cell.classList.remove("alive");
-  console.log(this.checkCells)
+  //console.log(this.checkCells)
   this.checkCells.splice(this.checkCells.indexOf(cellsToCheck[i]), 1);
   }}
   }
 }
 var board= new Board();
-initHTML();
-gameClock(0.5);
+var gameState = new GameState();
+initHTML(board.rows, board.columns);
+gameState.setSpeed(Number(prompt("update speed: ")));
 }
 main();

@@ -12,3 +12,6 @@
   border-color: white;
   border-width: 1px;
 }
+.toggled{
+  border-width: 2px;
+}
