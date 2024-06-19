@@ -56,12 +56,12 @@ function initHTML(board, gameState) {
   container.style['grid-template-rows'] = `repeat(${rows}, 50px)`
   container.style['grid-template-columns'] = `repeat(${columns}, 50px)`
 
-  for (let i = 0; i < columns; i++) {
-    for (let o = 0; o < rows; o++) {
+  for (let r = 0; r < columns; r++) {
+    for (let c = 0; c < rows; c++) {
       const cell = document.createElement('div')
 
       cell.classList.add('cell')
-      cell.id = `${i};${o}`
+      cell.id = `${r};${c}`
 
       cell.addEventListener('click', (e) => {
         const cell = e.target
@@ -93,9 +93,9 @@ class Cell {
     const cells = []
     const maxWidth = board.rows - 1
     const maxHeight = board.columns - 1
-    for (let row = -1; row < 2; row++)
-      for (let col = -1; col < 2; col++) {
-        const cell = [row + this.position[0], col + this.position[1]]
+    for (let r = -1; r < 2; r++)
+      for (let c = -1; c < 2; c++) {
+        const cell = [r + this.position[0], c + this.position[1]]
 
         if (cell[0] < 0) cell[0] = maxWidth
         if (cell[1] < 0) cell[1] = maxHeight
@@ -119,10 +119,10 @@ class Board {
     this.rows = rows
     this.checkCells = []
     this.data = []
-    for (let i = 0; i < this.rows; i++) {
-      this.data[i] = {}
-      for (let o = 0; o < this.columns; o++) {
-        this.data[i][o] = new Cell(this, i, o)
+    for (let r = 0; r < this.rows; r++) {
+      this.data[r] = {}
+      for (let c = 0; c < this.columns; c++) {
+        this.data[r][c] = new Cell(this, r, c)
       }
     }
   }
@@ -130,8 +130,8 @@ class Board {
   checkRules(cell) {
     let aliveNeighbors = 0
     const nearbyCells = cell.returnNearbyCells()
-    for (let i = 0; i < nearbyCells.length; i++) {
-      if (nearbyCells[i].alive) {
+    for (let r = 0; r < nearbyCells.length; r++) {
+      if (nearbyCells[r].alive) {
         aliveNeighbors++
       }
     }
