@@ -37,11 +37,11 @@ function initHTML(board, gameState) {
   const rows = board.rows
   const columns = board.columns
 
-  var container = document.querySelector('.container')
-  var pauseButton = document.querySelector('.pause-button')
+  const container = document.querySelector('.container')
+  const pauseButton = document.querySelector('.pause-button')
 
   pauseButton.addEventListener('click', (e) => {
-    var btn = e.target
+    const btn = e.target
     if (btn.classList.contains('toggled')) {
       btn.textContent = '▐▐'
       btn.classList.toggle('toggled')
@@ -56,15 +56,16 @@ function initHTML(board, gameState) {
   container.style['grid-template-rows'] = `repeat(${rows}, 50px)`
   container.style['grid-template-columns'] = `repeat(${columns}, 50px)`
 
-  for (var i = 0; i < columns; i++) {
-    for (var o = 0; o < rows; o++) {
-      var cell = document.createElement('div')
+  for (let i = 0; i < columns; i++) {
+    for (let o = 0; o < rows; o++) {
+      const cell = document.createElement('div')
+
       cell.classList.add('cell')
       cell.id = `${i};${o}`
 
       cell.addEventListener('click', (e) => {
-        var cell = e.target
-        var position = cell.id.split(';')
+        const cell = e.target
+        const position = cell.id.split(';')
         board.data[position[0]][position[1]].changeState()
         board.updateDisplay()
       })
@@ -89,26 +90,18 @@ class Cell {
 
   returnNearbyCells() {
     const board = this.board
-    var cells = []
-    var maxWidth = board.rows - 1
-    var maxHeight = board.columns - 1
-    for (var row = -1; row < 2; row++)
-      for (var col = -1; col < 2; col++) {
-        var cell = [row + this.position[0], col + this.position[1]]
+    const cells = []
+    const maxWidth = board.rows - 1
+    const maxHeight = board.columns - 1
+    for (let row = -1; row < 2; row++)
+      for (let col = -1; col < 2; col++) {
+        const cell = [row + this.position[0], col + this.position[1]]
 
-        if (cell[0] < 0) {
-          cell[0] = maxWidth
-        }
-        if (cell[1] < 0) {
-          cell[1] = maxHeight
-        }
-        if (cell[0] > board.rows - 1) {
-          cell[0] = 0
-        }
+        if (cell[0] < 0) cell[0] = maxWidth
+        if (cell[1] < 0) cell[1] = maxHeight
+        if (cell[0] > board.rows - 1) cell[0] = 0
+        if (cell[1] > board.columns - 1) cell[1] = 0
 
-        if (cell[1] > board.columns - 1) {
-          cell[1] = 0
-        }
         if (
           !(this.position[0] == cell[0] && this.position[1] == cell[1]) &&
           !cells.includes(board.data[cell[0]][cell[1]])
@@ -126,18 +119,18 @@ class Board {
     this.rows = rows
     this.checkCells = []
     this.data = []
-    for (var i = 0; i < this.rows; i++) {
+    for (let i = 0; i < this.rows; i++) {
       this.data[i] = {}
-      for (var o = 0; o < this.columns; o++) {
+      for (let o = 0; o < this.columns; o++) {
         this.data[i][o] = new Cell(this, i, o)
       }
     }
   }
 
   checkRules(cell) {
-    var aliveNeighbors = 0
-    var nearbyCells = cell.returnNearbyCells()
-    for (var i = 0; i < nearbyCells.length; i++) {
+    let aliveNeighbors = 0
+    const nearbyCells = cell.returnNearbyCells()
+    for (let i = 0; i < nearbyCells.length; i++) {
       if (nearbyCells[i].alive) {
         aliveNeighbors++
       }
@@ -159,15 +152,15 @@ class Board {
   }
 
   updateCells() {
-    var cells = this.checkCells
-    var actions = [] // [false, [position]], [true, position] false kill true revive
-    var checkedCells = []
+    const cells = this.checkCells
+    const actions = [] // [false, [position]], [true, position] false kill true revive
+    const checkedCells = []
 
-    for (var i = 0; i < cells.length; i++) {
+    for (let i = 0; i < cells.length; i++) {
       // for cell
-      var cell = this.data[cells[i][0]][cells[i][1]]
-      var nearbyCells = cell.returnNearbyCells()
-      for (var o = 0; o < nearbyCells.length; o++) {
+      const cell = this.data[cells[i][0]][cells[i][1]]
+      const nearbyCells = cell.returnNearbyCells()
+      for (let o = 0; o < nearbyCells.length; o++) {
         //for nearby cell
         if (!checkedCells.includes(nearbyCells[o])) {
           actions.push(this.checkRules(nearbyCells[o]))
@@ -180,18 +173,16 @@ class Board {
         checkedCells.push(cell)
       }
     }
-    for (var action of actions) {
-      var [actionType, cell] = action
-      if (cell.alive != actionType) {
-        cell.changeState()
-      }
+    for (const action of actions) {
+      const [actionType, cell] = action
+      if (cell.alive != actionType) cell.changeState()
     }
   }
 
   updateDisplay() {
-    var cellsToCheck = this.checkCells.slice()
-    for (var i = 0; i < cellsToCheck.length; i++) {
-      var cell = document.getElementById(
+    const cellsToCheck = this.checkCells.slice()
+    for (let i = 0; i < cellsToCheck.length; i++) {
+      const cell = document.getElementById(
         `${cellsToCheck[i][0]};${cellsToCheck[i][1]}`,
       )
       if (this.data[cellsToCheck[i][0]][cellsToCheck[i][1]].alive) {
@@ -205,8 +196,8 @@ class Board {
 }
 
 function main() {
-  var board = new Board()
-  var gameState = new GameState(board)
+  const board = new Board()
+  const gameState = new GameState(board)
   initHTML(board, gameState)
   gameState.setSpeed(Number(prompt('update speed: ')))
 }
