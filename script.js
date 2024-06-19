@@ -13,30 +13,22 @@ class GameState {
   }
 
   start(speed = this.speed) {
-    //optional speed parameter
     this.speed = speed
-    //console.log("starting");
-    //console.log(this.speed);
-    //console.log(this.paused)
     this.paused = false
     this.gameClock()
     return true
   }
 
   stop() {
-    //console.log("stopping");
     this.paused = true
     return true
   }
 
   gameClock = async (speed = this.speed) => {
-    //optional speed parameter
-
     while (this.paused == false) {
       this.board.updateCells()
       this.board.updateDisplay()
       await new Promise((r) => setTimeout(r, 1000 / speed))
-      //console.log("ping");
     }
   }
 }
@@ -47,7 +39,6 @@ function main() {
     var pauseButton = document.querySelector('.pause-button')
     pauseButton.addEventListener('click', (e) => {
       var btn = e.target
-      //console.log(btn.classList)
       if (btn.classList.contains('toggled')) {
         btn.textContent = '▐▐'
         btn.classList.toggle('toggled')
@@ -71,10 +62,8 @@ function main() {
           var cell = e.target
           var position = cell.id.split(';')
           board.data[position[0]][position[1]].changeState()
-
           board.updateDisplay()
         })
-
         container.appendChild(cell)
       }
     }
@@ -85,14 +74,13 @@ function main() {
       this.alive = false
     }
     changeState() {
-      //console.log("alive before: ", this.alive)
       this.alive = !this.alive
-      // console.log("alive after: ", this.alive)
       if (this.alive) {
         board.checkCells.push(this.position)
       }
       return true
     }
+
     returnNearbyCells() {
       var cells = []
       var maxWidth = board.rows - 1
@@ -121,7 +109,6 @@ function main() {
             cells.push(board.data[cell[0]][cell[1]])
           }
         }
-      //console.log(cells)
       return cells
     }
   }
@@ -143,9 +130,6 @@ function main() {
       var aliveNeighbors = 0
       var nearbyCells = cell.returnNearbyCells()
       for (var i = 0; i < nearbyCells.length; i++) {
-        //console.log(cell);
-        //console.log(nearbyCells)
-
         if (nearbyCells[i].alive) {
           aliveNeighbors++
         }
@@ -188,8 +172,6 @@ function main() {
           checkedCells.push(cell)
         }
       }
-      //console.log(actions);
-      // console.log(this.checkCells);
       for (var action of actions) {
         var [actionType, cell] = action
         if (cell.alive != actionType) {
@@ -204,20 +186,16 @@ function main() {
         var cell = document.getElementById(
           `${cellsToCheck[i][0]};${cellsToCheck[i][1]}`,
         )
-        // console.log(cellsToCheck)
-        //console.log(this.checkCells);
-        // console.log(i)
-        // console.log(cell)
         if (this.data[cellsToCheck[i][0]][cellsToCheck[i][1]].alive) {
           cell.classList.add('alive')
         } else {
           cell.classList.remove('alive')
-          //console.log(this.checkCells)
           this.checkCells.splice(this.checkCells.indexOf(cellsToCheck[i]), 1)
         }
       }
     }
   }
+
   var board = new Board()
   var gameState = new GameState(board)
   initHTML(board.rows, board.columns)
