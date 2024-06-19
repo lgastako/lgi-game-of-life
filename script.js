@@ -74,52 +74,53 @@ function initHTML(board, gameState) {
   }
 }
 
-function main() {
-  class Cell {
-    constructor(row, col) {
-      this.position = [row, col]
-      this.alive = false
-    }
-    changeState() {
-      this.alive = !this.alive
-      if (this.alive) {
-        board.checkCells.push(this.position)
-      }
-      return true
-    }
-
-    returnNearbyCells() {
-      var cells = []
-      var maxWidth = board.rows - 1
-      var maxHeight = board.columns - 1
-      for (var row = -1; row < 2; row++)
-        for (var col = -1; col < 2; col++) {
-          var cell = [row + this.position[0], col + this.position[1]]
-
-          if (cell[0] < 0) {
-            cell[0] = maxWidth
-          }
-          if (cell[1] < 0) {
-            cell[1] = maxHeight
-          }
-          if (cell[0] > board.rows - 1) {
-            cell[0] = 0
-          }
-
-          if (cell[1] > board.columns - 1) {
-            cell[1] = 0
-          }
-          if (
-            !(this.position[0] == cell[0] && this.position[1] == cell[1]) &&
-            !cells.includes(board.data[cell[0]][cell[1]])
-          ) {
-            cells.push(board.data[cell[0]][cell[1]])
-          }
-        }
-      return cells
-    }
+class Cell {
+  constructor(board, row, col) {
+    this.board = board
+    this.position = [row, col]
+    this.alive = false
   }
 
+  changeState() {
+    this.alive = !this.alive
+    if (this.alive) this.board.checkCells.push(this.position)
+    return true
+  }
+
+  returnNearbyCells() {
+    const board = this.board
+    var cells = []
+    var maxWidth = board.rows - 1
+    var maxHeight = board.columns - 1
+    for (var row = -1; row < 2; row++)
+      for (var col = -1; col < 2; col++) {
+        var cell = [row + this.position[0], col + this.position[1]]
+
+        if (cell[0] < 0) {
+          cell[0] = maxWidth
+        }
+        if (cell[1] < 0) {
+          cell[1] = maxHeight
+        }
+        if (cell[0] > board.rows - 1) {
+          cell[0] = 0
+        }
+
+        if (cell[1] > board.columns - 1) {
+          cell[1] = 0
+        }
+        if (
+          !(this.position[0] == cell[0] && this.position[1] == cell[1]) &&
+          !cells.includes(board.data[cell[0]][cell[1]])
+        ) {
+          cells.push(board.data[cell[0]][cell[1]])
+        }
+      }
+    return cells
+  }
+}
+
+function main() {
   class Board {
     constructor(rows = 25, columns = 25) {
       this.columns = columns
@@ -129,10 +130,11 @@ function main() {
       for (var i = 0; i < this.rows; i++) {
         this.data[i] = {}
         for (var o = 0; o < this.columns; o++) {
-          this.data[i][o] = new Cell(i, o)
+          this.data[i][o] = new Cell(this, i, o)
         }
       }
     }
+
     checkRules(cell) {
       var aliveNeighbors = 0
       var nearbyCells = cell.returnNearbyCells()
