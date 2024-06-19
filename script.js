@@ -5,7 +5,7 @@ function main() {
       this.speed = 1
     }
     setSpeed(speed) {
-      if (!speed <= 0) {
+      if (speed > 0) {
         this.speed = speed
       }
       return this.speed
