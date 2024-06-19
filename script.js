@@ -120,91 +120,91 @@ class Cell {
   }
 }
 
-function main() {
-  class Board {
-    constructor(rows = 25, columns = 25) {
-      this.columns = columns
-      this.rows = rows
-      this.checkCells = []
-      this.data = []
-      for (var i = 0; i < this.rows; i++) {
-        this.data[i] = {}
-        for (var o = 0; o < this.columns; o++) {
-          this.data[i][o] = new Cell(this, i, o)
-        }
-      }
-    }
-
-    checkRules(cell) {
-      var aliveNeighbors = 0
-      var nearbyCells = cell.returnNearbyCells()
-      for (var i = 0; i < nearbyCells.length; i++) {
-        if (nearbyCells[i].alive) {
-          aliveNeighbors++
-        }
-      }
-      if (cell.alive) {
-        if (aliveNeighbors < 2 || aliveNeighbors > 3) {
-          return [false, cell]
-        } else {
-          return [true, cell]
-        }
-      } else if (!cell.alive) {
-        if (aliveNeighbors == 3) {
-          return [true, cell]
-        } else {
-          return [false, cell]
-        }
-      }
-      return 'fail'
-    }
-
-    updateCells() {
-      var cells = this.checkCells
-      var actions = [] // [false, [position]], [true, position] false kill true revive
-      var checkedCells = []
-
-      for (var i = 0; i < cells.length; i++) {
-        // for cell
-        var cell = this.data[cells[i][0]][cells[i][1]]
-        var nearbyCells = cell.returnNearbyCells()
-        for (var o = 0; o < nearbyCells.length; o++) {
-          //for nearby cell
-          if (!checkedCells.includes(nearbyCells[o])) {
-            actions.push(this.checkRules(nearbyCells[o]))
-
-            checkedCells.push(nearbyCells[o])
-          }
-        }
-        if (!checkedCells.includes(cell)) {
-          actions.push(this.checkRules(cell))
-          checkedCells.push(cell)
-        }
-      }
-      for (var action of actions) {
-        var [actionType, cell] = action
-        if (cell.alive != actionType) {
-          cell.changeState()
-        }
-      }
-    }
-
-    updateDisplay() {
-      var cellsToCheck = this.checkCells.slice()
-      for (var i = 0; i < cellsToCheck.length; i++) {
-        var cell = document.getElementById(
-          `${cellsToCheck[i][0]};${cellsToCheck[i][1]}`,
-        )
-        if (this.data[cellsToCheck[i][0]][cellsToCheck[i][1]].alive) {
-          cell.classList.add('alive')
-        } else {
-          cell.classList.remove('alive')
-          this.checkCells.splice(this.checkCells.indexOf(cellsToCheck[i]), 1)
-        }
+class Board {
+  constructor(rows = 25, columns = 25) {
+    this.columns = columns
+    this.rows = rows
+    this.checkCells = []
+    this.data = []
+    for (var i = 0; i < this.rows; i++) {
+      this.data[i] = {}
+      for (var o = 0; o < this.columns; o++) {
+        this.data[i][o] = new Cell(this, i, o)
       }
     }
   }
 
+  checkRules(cell) {
+    var aliveNeighbors = 0
+    var nearbyCells = cell.returnNearbyCells()
+    for (var i = 0; i < nearbyCells.length; i++) {
+      if (nearbyCells[i].alive) {
+        aliveNeighbors++
+      }
+    }
+    if (cell.alive) {
+      if (aliveNeighbors < 2 || aliveNeighbors > 3) {
+        return [false, cell]
+      } else {
+        return [true, cell]
+      }
+    } else if (!cell.alive) {
+      if (aliveNeighbors == 3) {
+        return [true, cell]
+      } else {
+        return [false, cell]
+      }
+    }
+    return 'fail'
+  }
+
+  updateCells() {
+    var cells = this.checkCells
+    var actions = [] // [false, [position]], [true, position] false kill true revive
+    var checkedCells = []
+
+    for (var i = 0; i < cells.length; i++) {
+      // for cell
+      var cell = this.data[cells[i][0]][cells[i][1]]
+      var nearbyCells = cell.returnNearbyCells()
+      for (var o = 0; o < nearbyCells.length; o++) {
+        //for nearby cell
+        if (!checkedCells.includes(nearbyCells[o])) {
+          actions.push(this.checkRules(nearbyCells[o]))
+
+          checkedCells.push(nearbyCells[o])
+        }
+      }
+      if (!checkedCells.includes(cell)) {
+        actions.push(this.checkRules(cell))
+        checkedCells.push(cell)
+      }
+    }
+    for (var action of actions) {
+      var [actionType, cell] = action
+      if (cell.alive != actionType) {
+        cell.changeState()
+      }
+    }
+  }
+
+  updateDisplay() {
+    var cellsToCheck = this.checkCells.slice()
+    for (var i = 0; i < cellsToCheck.length; i++) {
+      var cell = document.getElementById(
+        `${cellsToCheck[i][0]};${cellsToCheck[i][1]}`,
+      )
+      if (this.data[cellsToCheck[i][0]][cellsToCheck[i][1]].alive) {
+        cell.classList.add('alive')
+      } else {
+        cell.classList.remove('alive')
+        this.checkCells.splice(this.checkCells.indexOf(cellsToCheck[i]), 1)
+      }
+    }
+  }
+}
+
+function main() {
   var board = new Board()
   var gameState = new GameState(board)
   initHTML(board, gameState)
