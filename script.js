@@ -88,7 +88,7 @@ class Cell {
     return true
   }
 
-  returnNearbyCells() {
+  nearbyCells() {
     const board = this.board
     const cells = []
     const maxWidth = board.rows - 1
@@ -129,7 +129,7 @@ class Board {
 
   checkRules(cell) {
     let aliveNeighbors = 0
-    const nearbyCells = cell.returnNearbyCells()
+    const nearbyCells = cell.nearbyCells()
     for (let r = 0; r < nearbyCells.length; r++) {
       if (nearbyCells[r].alive) {
         aliveNeighbors++
@@ -159,7 +159,7 @@ class Board {
     for (let i = 0; i < cells.length; i++) {
       // for cell
       const cell = this.data[cells[i][0]][cells[i][1]]
-      const nearbyCells = cell.returnNearbyCells()
+      const nearbyCells = cell.nearbyCells()
       for (let o = 0; o < nearbyCells.length; o++) {
         //for nearby cell
         if (!checkedCells.includes(nearbyCells[o])) {
