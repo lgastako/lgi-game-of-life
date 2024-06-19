@@ -1,44 +1,47 @@
-function main() {
-  class GameState {
-    constructor() {
-      this.paused = true
-      this.speed = 1
-    }
-    setSpeed(speed) {
-      if (speed > 0) {
-        this.speed = speed
-      }
-      return this.speed
-    }
-    start(speed = this.speed) {
-      //optional speed parameter
-      this.speed = speed
-      //console.log("starting");
-      //console.log(this.speed);
-      //console.log(this.paused)
-      this.paused = false
-      this.gameClock()
-      return true
-    }
-
-    stop() {
-      //console.log("stopping");
-      this.paused = true
-      return true
-    }
-
-    gameClock = async (speed = this.speed) => {
-      //optional speed parameter
-
-      while (this.paused == false) {
-        board.updateCells()
-        board.updateDisplay()
-        await new Promise((r) => setTimeout(r, 1000 / speed))
-        //console.log("ping");
-      }
-    }
+class GameState {
+  constructor(board) {
+    this.board = board
+    this.paused = true
+    this.speed = 1
   }
 
+  setSpeed(speed) {
+    if (speed > 0) {
+      this.speed = speed
+    }
+    return this.speed
+  }
+
+  start(speed = this.speed) {
+    //optional speed parameter
+    this.speed = speed
+    //console.log("starting");
+    //console.log(this.speed);
+    //console.log(this.paused)
+    this.paused = false
+    this.gameClock()
+    return true
+  }
+
+  stop() {
+    //console.log("stopping");
+    this.paused = true
+    return true
+  }
+
+  gameClock = async (speed = this.speed) => {
+    //optional speed parameter
+
+    while (this.paused == false) {
+      this.board.updateCells()
+      this.board.updateDisplay()
+      await new Promise((r) => setTimeout(r, 1000 / speed))
+      //console.log("ping");
+    }
+  }
+}
+
+function main() {
   function initHTML(rows, columns) {
     var container = document.querySelector('.container')
     var pauseButton = document.querySelector('.pause-button')
@@ -216,8 +219,9 @@ function main() {
     }
   }
   var board = new Board()
-  var gameState = new GameState()
+  var gameState = new GameState(board)
   initHTML(board.rows, board.columns)
   gameState.setSpeed(Number(prompt('update speed: ')))
 }
+
 main()
