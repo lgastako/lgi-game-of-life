@@ -1,17 +1,17 @@
-.container{
-  display:inline-grid;
+.container {
+  display: inline-grid;
 }
 
-.cell.alive{
+.cell.alive {
   background-color: white;
-} 
+}
 
-.cell{
+.cell {
   background-color: black;
   border-style: solid;
   border-color: white;
   border-width: 1px;
 }
-.toggled{
+.toggled {
   border-width: 2px;
 }
