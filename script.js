@@ -33,41 +33,48 @@ class GameState {
   }
 }
 
-function main() {
-  function initHTML(rows, columns) {
-    var container = document.querySelector('.container')
-    var pauseButton = document.querySelector('.pause-button')
-    pauseButton.addEventListener('click', (e) => {
-      var btn = e.target
-      if (btn.classList.contains('toggled')) {
-        btn.textContent = '▐▐'
-        btn.classList.toggle('toggled')
-        gameState.start()
-      } else {
-        btn.textContent = '▶'
-        btn.classList.toggle('toggled')
-        gameState.stop()
-      }
-    })
+function initHTML(board, gameState) {
+  const rows = board.rows
+  const columns = board.columns
 
-    container.style['grid-template-rows'] = `repeat(${rows}, 50px)`
-    container.style['grid-template-columns'] = `repeat(${columns}, 50px)`
+  var container = document.querySelector('.container')
+  var pauseButton = document.querySelector('.pause-button')
 
-    for (var i = 0; i < columns; i++) {
-      for (var o = 0; o < rows; o++) {
-        var cell = document.createElement('div')
-        cell.classList.add('cell')
-        cell.id = `${i};${o}`
-        cell.addEventListener('click', (e) => {
-          var cell = e.target
-          var position = cell.id.split(';')
-          board.data[position[0]][position[1]].changeState()
-          board.updateDisplay()
-        })
-        container.appendChild(cell)
-      }
+  pauseButton.addEventListener('click', (e) => {
+    var btn = e.target
+    if (btn.classList.contains('toggled')) {
+      btn.textContent = '▐▐'
+      btn.classList.toggle('toggled')
+      gameState.start()
+    } else {
+      btn.textContent = '▶'
+      btn.classList.toggle('toggled')
+      gameState.stop()
+    }
+  })
+
+  container.style['grid-template-rows'] = `repeat(${rows}, 50px)`
+  container.style['grid-template-columns'] = `repeat(${columns}, 50px)`
+
+  for (var i = 0; i < columns; i++) {
+    for (var o = 0; o < rows; o++) {
+      var cell = document.createElement('div')
+      cell.classList.add('cell')
+      cell.id = `${i};${o}`
+
+      cell.addEventListener('click', (e) => {
+        var cell = e.target
+        var position = cell.id.split(';')
+        board.data[position[0]][position[1]].changeState()
+        board.updateDisplay()
+      })
+
+      container.appendChild(cell)
     }
   }
+}
+
+function main() {
   class Cell {
     constructor(row, col) {
       this.position = [row, col]
@@ -198,7 +205,7 @@ function main() {
 
   var board = new Board()
   var gameState = new GameState(board)
-  initHTML(board.rows, board.columns)
+  initHTML(board, gameState)
   gameState.setSpeed(Number(prompt('update speed: ')))
 }
 
