@@ -33,7 +33,7 @@ class GameState {
   }
 }
 
-function initHTML(board, gameState) {
+function setupGame(board, gameState) {
   const rows = board.rows
   const columns = board.columns
 
@@ -198,7 +198,7 @@ class Board {
 function main() {
   const board = new Board()
   const gameState = new GameState(board)
-  initHTML(board, gameState)
+  setupGame(board, gameState)
   gameState.setSpeed(Number(prompt('update speed: ')))
 }
 
