@@ -66,7 +66,7 @@ function initHTML(board, gameState) {
       cell.addEventListener('click', (e) => {
         const cell = e.target
         const position = cell.id.split(';')
-        board.data[position[0]][position[1]].changeState()
+        board.cells[position[0]][position[1]].changeState()
         board.updateDisplay()
       })
 
@@ -90,7 +90,7 @@ class Cell {
 
   nearbyCells() {
     const board = this.board
-    const cells = []
+    const neighbors = []
     const maxWidth = board.rows - 1
     const maxHeight = board.columns - 1
     for (let r = -1; r < 2; r++)
@@ -104,12 +104,12 @@ class Cell {
 
         if (
           !(this.position[0] == cell[0] && this.position[1] == cell[1]) &&
-          !cells.includes(board.data[cell[0]][cell[1]])
+          !neighbors.includes(board.cells[cell[0]][cell[1]])
         ) {
-          cells.push(board.data[cell[0]][cell[1]])
+          neighbors.push(board.cells[cell[0]][cell[1]])
         }
       }
-    return cells
+    return neighbors
   }
 }
 
@@ -118,11 +118,11 @@ class Board {
     this.columns = columns
     this.rows = rows
     this.checkCells = []
-    this.data = []
+    this.cells = []
     for (let r = 0; r < this.rows; r++) {
-      this.data[r] = {}
+      this.cells[r] = {}
       for (let c = 0; c < this.columns; c++) {
-        this.data[r][c] = new Cell(this, r, c)
+        this.cells[r][c] = new Cell(this, r, c)
       }
     }
   }
@@ -152,13 +152,13 @@ class Board {
   }
 
   updateCells() {
-    const cells = this.checkCells
+    const ccs = this.checkCells
     const actions = [] // [false, [position]], [true, position] false kill true revive
     const checkedCells = []
 
-    for (let i = 0; i < cells.length; i++) {
+    for (let i = 0; i < ccs.length; i++) {
       // for cell
-      const cell = this.data[cells[i][0]][cells[i][1]]
+      const cell = this.cells[ccs[i][0]][ccs[i][1]]
       const nearbyCells = cell.nearbyCells()
       for (let o = 0; o < nearbyCells.length; o++) {
         //for nearby cell
@@ -185,7 +185,7 @@ class Board {
       const cell = document.getElementById(
         `${cellsToCheck[i][0]};${cellsToCheck[i][1]}`,
       )
-      if (this.data[cellsToCheck[i][0]][cellsToCheck[i][1]].alive) {
+      if (this.cells[cellsToCheck[i][0]][cellsToCheck[i][1]].alive) {
         cell.classList.add('alive')
       } else {
         cell.classList.remove('alive')
